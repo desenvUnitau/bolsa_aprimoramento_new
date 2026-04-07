@@ -1,0 +1,12 @@
+ul{
+    padding-left: 20px;
+}
+
+li{
+    margin-bottom: 5px;
+}
+
+li p{
+    margin: 0px;
+    text-align: justify;
+}

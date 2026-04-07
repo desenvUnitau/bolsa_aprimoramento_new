@@ -1,0 +1,5 @@
+.conteudo-custom {
+  flex: 1 0 auto;
+  background-color: #f8f9fa;
+  min-height: 0px;
+}

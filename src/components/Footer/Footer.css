@@ -1,0 +1,6 @@
+.footer-custom {
+  border-top: 4px solid #25BBE9; /* azul Bootstrap */
+  padding: 20px 0;
+  background-color: #fff;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.08); /* sombra na parte superior */
+}

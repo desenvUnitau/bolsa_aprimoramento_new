@@ -1,0 +1,44 @@
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.btn-custom {
+  background-color: #25BBE9 !important;
+  border-color: #25BBE9 !important;
+  color: #fff !important;
+}
+
+.btn-custom:hover,
+.btn-custom:focus { 
+  background-color: #199ac2 !important;
+  border-color: #199ac2 !important;
+  color: #fff !important;
+}
+
+.custom-roxo {
+  background-color: #68328A !important;
+  border-color: #68328A !important;
+  color: #fff !important;
+}
+
+.custom-roxo:hover,
+.custom-roxo:focus { 
+  background-color: #7e46a1 !important;
+  border-color: #7e46a1 !important;
+  color: #fff !important;
+}
+
+.btn-custom-vermelho {
+  background-color: #AC1350 !important;
+  border-color: #AC1350 !important;
+  color: #fff !important;
+}
+
+.btn-custom-vermelho:hover,
+.btn-custom-vermelho:focus { 
+  background-color: #e72f79 !important;
+  border-color: #e72f79 !important;
+  color: #fff !important;
+}

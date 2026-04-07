@@ -1,0 +1,34 @@
+.login-form {
+  min-width: 400px;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  background: #fff;
+}
+
+.login-form .form-control {
+  height: 56px;
+  font-size: 18px;
+}
+
+.login-form .form-floating {
+  margin-bottom: 1.5rem;
+}
+
+/* .login-form .btn {
+  height: 48px;
+  font-size: 18px;
+} */
+
+.btn-custom  {
+  background-color: #043269 !important; 
+  border-color: #043269 !important;
+  color: #fff !important;
+}
+
+.btn-custom:hover,
+.btn-custom:focus { 
+  background-color: #074ca0 !important;
+  border-color: #074ca0 !important;
+  color: #fff !important;
+}

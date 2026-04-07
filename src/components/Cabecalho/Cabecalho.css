@@ -1,0 +1,34 @@
+.cabecalho-custom {
+  background-color: #043269;
+  /* border-bottom: 4px solid #043269; azul Bootstrap */
+  height: 80px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* sombra suave */
+}
+
+.cabecalho-custom a {
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.8rem;
+}
+
+.cabecalho-custom img {
+  height: 70px; /* Ajuste a altura da imagem do logo */
+  margin-right: 20px; /* Espaçamento entre o logo e o título */
+  margin-left: 10px;
+}
+
+.cabecalho-custom a:hover{
+  color: #fff;
+}
+
+@media (max-width: 950px) {
+    .titulo-navbar {
+        display: none;
+    }
+
+    .cabecalho-custom a img {
+      height: 60px;
+    }
+}

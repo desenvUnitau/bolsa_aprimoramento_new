@@ -1,0 +1,24 @@
+.shadown-topo h4{
+    color: #043269;
+}
+
+.text-top{
+    font-size: 20px;
+}
+
+.text-bottom{
+    width: 98% !important; 
+}
+
+.shadown-topo{
+    border-radius: 3px;
+    background-color: rgb(245, 239, 239);
+    box-shadow: 12px 11px 13px -4px rgba(0,0,0,0.54);
+    -webkit-box-shadow: 12px 11px 13px -4px rgba(0,0,0,0.54);
+    -moz-box-shadow: 12px 11px 13px -4px rgba(0,0,0,0.54);
+}
+
+.form{
+    border: 1px solid #043269;
+    padding: 10px;
+}
