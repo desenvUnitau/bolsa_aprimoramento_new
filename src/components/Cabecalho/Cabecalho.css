@@ -1,10 +1,15 @@
 .cabecalho-custom {
   background-color: #043269;
-  /* border-bottom: 4px solid #043269; azul Bootstrap */
   height: 80px;
   display: flex;
   align-items: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* sombra suave */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.cabecalho-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .cabecalho-custom a {
@@ -14,13 +19,31 @@
 }
 
 .cabecalho-custom img {
-  height: 70px; /* Ajuste a altura da imagem do logo */
-  margin-right: 20px; /* Espaçamento entre o logo e o título */
+  height: 70px;
+  margin-right: 20px;
   margin-left: 10px;
 }
 
 .cabecalho-custom a:hover{
   color: #fff;
+}
+
+.cabecalho-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: transparent;
+  color: #fff;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.cabecalho-logout:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.85);
 }
 
 @media (max-width: 950px) {

@@ -1,7 +1,10 @@
 import axios from "axios";
+import { ACCESS_TYPES, LOGIN_ROUTES, clearAccessSession, getAccessTypeByPath, getStoredToken } from "./auth";
+
+export const API_BASE_URL = "http://localhost:8082";
 
 export const api = axios.create({
-    baseURL: "http://localhost:8082"
+    baseURL: API_BASE_URL
 });
 
 export const setAuthToken = (token) =>{
@@ -16,11 +19,11 @@ api.interceptors.response.use(
     res => res,
     async err =>{
         if(err.response?.status === 401){
-            console.warn('401 Unauthorized - token inválido ou expirado');
-            localStorage.removeItem("bolsaAprimora");
-            setAuthToken(null);
-            window.location.href = "/login";
+            const accessType = getAccessTypeByPath(window.location.pathname);
             
+            clearAccessSession(accessType);
+            setAuthToken(null);
+            window.location.href = LOGIN_ROUTES[accessType];
 
         }
         return Promise.reject(err);
@@ -28,7 +31,9 @@ api.interceptors.response.use(
 );
 
 export const initAuth = () => {
-    const token = localStorage.getItem("bolsaAprimora");
+    const preferredAccessType = getAccessTypeByPath(window.location.pathname);
+    const token = getStoredToken(preferredAccessType);
+
     if (token) {
         setAuthToken(token);
     }
