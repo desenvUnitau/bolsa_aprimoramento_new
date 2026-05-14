@@ -284,58 +284,63 @@ export default function Home(){
         }
 
         const payload = {
-            ra: aluno.ra,
-            nome: aluno.nome,
-            cpf: aluno.cpf,
-            rg: aluno.rg,
-            sexo: formData.sexo,
-            idRacaEtnia: normalizeNumericValue(formData.idRacaEtnia),
-            idDeficiencia: normalizeNumericValue(formData.idDeficiencia),
-            idEstCivilAl: normalizeNumericValue(formData.idEstCivilAl),
-            dataNascimento: aluno.dataNascimento,
-            email: formData.email,
-            telefone: formData.telefone,
-            celular: formData.celular,
-            cep: formData.cep,
-            endereco: formData.endereco,
-            numero: formData.numero,
-            bairro: formData.bairro,
-            complemento: formData.complemento,
-            codigoCurso: aluno.codigoCurso,
-            descricaoCurso: aluno.curso,
-            fase: aluno.fase,
-            turno: aluno.turno,
-            anoSemestre: aluno.periodoLetivo,
-            disponibilidadeManha: formData.disponibilidadeManha,
-            disponibilidadeTarde: formData.disponibilidadeTarde,
-            disponibilidadeNoite: formData.disponibilidadeNoite,
-            habilidadeAtendPublico: formData.habilidadeAtendPublico,
-            cursoExtracurricular: formData.cursoExtracurricular,
-            experienciaCurricular: formData.experienciaCurricular
+            aluno:{
+                ra: aluno.ra,
+                nome: aluno.nome,
+                cpf: aluno.cpf,
+                rg: aluno.rg,
+                sexo: formData.sexo,
+                idRacaEtnia: normalizeNumericValue(formData.idRacaEtnia),
+                idDeficiencia: normalizeNumericValue(formData.idDeficiencia),
+                idEstCivilAl: normalizeNumericValue(formData.idEstCivilAl),
+                dataNascimento: aluno.dataNascimento,
+                email: formData.email,
+                telefone: formData.telefone,
+                celular: formData.celular,
+                cep: formData.cep,
+                endereco: formData.endereco,
+                numero: formData.numero,
+                bairro: formData.bairro,
+                complemento: formData.complemento,
+                codigoCurso: aluno.codigoCurso,
+                descricaoCurso: aluno.curso,
+                fase: aluno.fase,
+                turno: aluno.turno
+            },
+            alunoSemestre :{
+                anoSemestre: aluno.periodoLetivo,
+                disponibilidadeManha: formData.disponibilidadeManha,
+                disponibilidadeTarde: formData.disponibilidadeTarde,
+                disponibilidadeNoite: formData.disponibilidadeNoite,
+                habilidadeAtendPublico: formData.habilidadeAtendPublico,
+                cursoExtracurricular: formData.cursoExtracurricular,
+                experienciaCurricular: formData.experienciaCurricular
+            }
         };
 
+
         const confirmationRows = buildConfirmationRows([
-            { label: 'Nome', value: payload.nome },
-            { label: 'RA', value: payload.ra },
-            { label: 'CPF', value: formatCpf(payload.cpf) },
-            { label: 'E-mail', value: payload.email },
-            { label: 'Telefone', value: payload.telefone },
-            { label: 'Celular', value: payload.celular },
-            { label: 'CEP', value: payload.cep },
-            { label: 'Endereço', value: payload.endereco },
-            { label: 'Número', value: payload.numero },
-            { label: 'Bairro', value: payload.bairro },
-            { label: 'Complemento', value: payload.complemento },
-            { label: 'Estado Civil', value: getOptionByValue(estadoCivilOptions, payload.idEstCivilAl)?.label },
-            { label: 'Sexo', value: payload.sexo },
-            { label: 'Deficiência', value: getOptionByValue(deficienciaOptions, payload.idDeficiencia)?.label },
-            { label: 'Raça/Etnia', value: getOptionByValue(racaEtniaOptions, payload.idRacaEtnia)?.label },
+            { label: 'Nome', value: payload.aluno.nome },
+            { label: 'RA', value: payload.aluno.ra },
+            { label: 'CPF', value: formatCpf(payload.aluno.cpf) },
+            { label: 'E-mail', value: payload.aluno.email },
+            { label: 'Telefone', value: payload.aluno.telefone },
+            { label: 'Celular', value: payload.aluno.celular },
+            { label: 'CEP', value: payload.aluno.cep },
+            { label: 'Endereço', value: payload.aluno.endereco },
+            { label: 'Número', value: payload.aluno.numero },
+            { label: 'Bairro', value: payload.aluno.bairro },
+            { label: 'Complemento', value: payload.aluno.complemento },
+            { label: 'Estado Civil', value: getOptionByValue(estadoCivilOptions, payload.aluno.idEstCivilAl)?.label },
+            { label: 'Sexo', value: payload.aluno.sexo },
+            { label: 'Deficiência', value: getOptionByValue(deficienciaOptions, payload.aluno.idDeficiencia)?.label },
+            { label: 'Raça/Etnia', value: getOptionByValue(racaEtniaOptions, payload.aluno.idRacaEtnia)?.label },
             { label: 'Disponibilidade', value: [
-                payload.disponibilidadeManha ? 'Manhã' : null,
-                payload.disponibilidadeTarde ? 'Tarde' : null,
-                payload.disponibilidadeNoite ? 'Noite' : null
+                payload.alunoSemestre.disponibilidadeManha ? 'Manhã' : null,
+                payload.alunoSemestre.disponibilidadeTarde ? 'Tarde' : null,
+                payload.alunoSemestre.disponibilidadeNoite ? 'Noite' : null
             ].filter(Boolean).join(', ') },
-            { label: 'Atendimento ao público', value: getOptionByValue(habilidadeAtendimentoOptions, payload.habilidadeAtendPublico)?.label }
+            { label: 'Atendimento ao público', value: getOptionByValue(habilidadeAtendimentoOptions, payload.alunoSemestre.habilidadeAtendPublico)?.label }
         ]);
 
         const confirmation = await Swal.fire({
@@ -363,7 +368,9 @@ export default function Home(){
         setIsSubmitting(true);
 
         try {
-            const data = await api.post('/alunos/cadastrar', payload);
+
+            console.log(payload);
+            const data = await api.post('/cadastroCompleto', payload);
 
             toast.success('Cadastro do aluno enviado com sucesso.');
             clearAccessSession(ACCESS_TYPES.aluno);

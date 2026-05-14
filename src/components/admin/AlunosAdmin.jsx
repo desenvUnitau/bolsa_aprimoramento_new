@@ -37,7 +37,7 @@ export default function AlunosAdmin() {
     const fetchAnoSemestre = async () => {
       setLoadingSemestres(true);
       try {
-        const response = await api.get('/alunos/buscarAnoSemestres');
+        const response = await api.get('/alunoSemestre/anoSemestres');
         const options = response.data ?? [];
         setAnoSemestreOptions(options);
         if (options.length > 0) {

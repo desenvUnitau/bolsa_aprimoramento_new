@@ -4,6 +4,7 @@ import './index.css'
 import 'react-toastify/dist/ReactToastify.css'
 import App from './App.jsx'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 // import { setAuthToken } from './config/api.jsx';
 

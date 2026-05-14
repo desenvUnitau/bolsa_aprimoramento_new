@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { api } from "../../config/api";
 import AdminPagination from "./AdminPagination";
 import Select from "react-select";
+import { Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const INITIAL_FILTERS = {
     requisitante: "",
@@ -78,12 +79,25 @@ const normalizeFilterValue = (key, value) => {
 
     return value;
 };
+const formatDate = (value) => {
+    if (!value) return '-';
+    const [year, month, day] = String(value).split('T')[0].split('-');
+    return `${day}/${month}/${year}`;
+};
+
 const getDeferimentoBadge = (value) => {
+    if (value === null || value === undefined) {
+        return {
+            label: "Sem análise",
+            className: "admin-status-badge-neutral"
+        };
+    }
+
     const badge = DEFERIMENTO_BADGES[String(value)];
 
     if (!badge) {
         return {
-            label: value ?? "-",
+            label: String(value),
             className: "admin-status-badge-neutral"
         };
     }
@@ -107,6 +121,8 @@ export default function AdminSolicitacoes() {
         number: 0
     });
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const loadSolicitacoes = async () => {
@@ -155,7 +171,7 @@ export default function AdminSolicitacoes() {
     useEffect(() => {
         const loadAnoSemestreOptions = async () => {
             try {
-                const response = await api.get('/alunos/buscarAnoSemestres');
+                const response = await api.get('/alunoSemestre/anoSemestres');
                 const options = response.data ?? [];
                 setOptionsAnoSemestre(options);
             } catch (error) {
@@ -234,7 +250,18 @@ export default function AdminSolicitacoes() {
         setPage(0);
     };
 
+    const handleConfirmationInformation = (item) => {
+        setSelectedItem(item);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setSelectedItem(null);
+    };
+
     return (
+        <>
         <section className="admin-dashboard">
             <div className="admin-dashboard-panel">
                 <div className="admin-list-header">
@@ -402,13 +429,13 @@ export default function AdminSolicitacoes() {
                                 return (
                                     <tr key={`${item.idRequisicao ?? 'sem-id'}-${index}`}>
                                         <td>{item.idRequisicao ?? '-'}</td>
-                                        <td>{item.aluno?.nome ?? '-'}</td>
-                                        <td>{item.aluno?.ra ?? '-'}</td>
-                                        <td>{item.aluno?.cpf ?? '-'}</td>
+                                        <td>{item.aluno?.aluno?.nome ?? '-'}</td>
+                                        <td>{item.aluno?.aluno?.ra ?? '-'}</td>
+                                        <td>{item.aluno?.aluno?.cpf ?? '-'}</td>
                                         <td>{item.modalidade?.descricaoModalidade ?? '-'}</td>
                                         <td>{item.idDepartamento ?? '-'}</td>
-                                        <td>{item.aluno?.sexo ?? '-'}</td>
-                                        <td>{item.aluno?.descricaoCurso ?? '-'}</td>
+                                        <td>{item.aluno?.aluno?.sexo ?? '-'}</td>
+                                        <td>{item.aluno?.aluno?.descricaoCurso ?? '-'}</td>
                                         <td>
                                             <span className={`admin-status-badge ${deferimentoBadge.className}`}>
                                                 {deferimentoBadge.label}
@@ -416,12 +443,16 @@ export default function AdminSolicitacoes() {
                                         </td>
                                         <td>
                                             <div className="admin-table-actions d-flex">
-                                                <button className="btn btn-sm btn-primary">
-                                                    <InfoCircle />
-                                                </button>
-                                                <button className="btn btn-sm btn-success ms-2">
-                                                    <Check2Circle />
-                                                </button>
+                                                <OverlayTrigger placement="top" overlay={<Tooltip>Clique para verificar as informações do aluno</Tooltip>}>
+                                                    <button className="btn btn-sm btn-primary" onClick={() => handleConfirmationInformation(item)}>
+                                                        <InfoCircle />
+                                                    </button>
+                                                </OverlayTrigger>
+                                                <OverlayTrigger placement="top" overlay={<Tooltip>Clique para aprovar a requisição</Tooltip>}>
+                                                    <button className="btn btn-sm btn-success ms-2">
+                                                        <Check2Circle />
+                                                    </button>
+                                                </OverlayTrigger>
                                             </div>
                                             {/* Ações futuras, como visualizar detalhes, editar, etc. */}
                                         </td>
@@ -442,5 +473,166 @@ export default function AdminSolicitacoes() {
                 </div>
             </div>
         </section>
+
+        <Modal show={showModal} onHide={handleCloseModal} size="lg" centered>
+            <Modal.Header closeButton>
+                <Modal.Title>Detalhes da Solicitação</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                {selectedItem && (
+                    <>
+                        <h6 className="text-muted fw-semibold mb-2">Dados do Aluno</h6>
+                        <div className="row g-2 mb-4">
+                            <div className="col-sm-6">
+                                <small className="text-muted d-block">Nome</small>
+                                <span>{selectedItem.aluno?.aluno?.nome ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">RA</small>
+                                <span>{selectedItem.aluno?.aluno?.ra ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">CPF</small>
+                                <span>{selectedItem.aluno?.aluno?.cpf ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-6">
+                                <small className="text-muted d-block">Data de Nascimento</small>
+                                <span>{formatDate(selectedItem.aluno?.aluno?.dataNascimento)}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Curso</small>
+                                <span>{selectedItem.aluno?.aluno?.descricaoCurso ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Sexo</small>
+                                <span>{selectedItem.aluno?.aluno?.sexo ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Raça/etnia</small>
+                                <span>{selectedItem.aluno?.aluno?.racaEtnia?.descricaoRaca ?? '-'}</span>
+                            </div>
+                            
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Estado Civil</small>
+                                <span>{selectedItem.aluno?.aluno?.estCivilAl?.descricaoEstCivil ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Turno</small>
+                                <span>{selectedItem.aluno?.aluno?.turno ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">fase</small>
+                                <span>{selectedItem.aluno?.aluno?.fase ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-6">
+                                <small className="text-muted d-block">Endereço</small>
+                                <span>{selectedItem.aluno?.aluno?.endereco ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-2">
+                                <small className="text-muted d-block">Número</small>
+                                <span>{selectedItem.aluno?.aluno?.numero ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-4">
+                                <small className="text-muted d-block">Bairro</small>
+                                <span>{selectedItem.aluno?.aluno?.bairro ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-6">
+                                <small className="text-muted d-block">E-mail</small>
+                                <span>{selectedItem.aluno?.aluno?.email ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Telefone</small>
+                                <span>{selectedItem.aluno?.aluno?.telefone ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Celular</small>
+                                <span>{selectedItem.aluno?.aluno?.celular ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Deficiência</small>
+                                <span>{selectedItem.aluno?.aluno?.deficiencia?.descricaoDefic ?? '-'}</span>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <h6 className="text-muted fw-semibold mb-2">Dados do Semestre</h6>
+                        <div className="row g-2">
+                           
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Ano/Semestre</small>
+                                <span>{selectedItem.aluno?.anoSemestre ?? '-'}</span>
+                            </div>
+                            
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Deferimento</small>
+                                <span className={`admin-status-badge ${getDeferimentoBadge(selectedItem.deferimento).className}`}>
+                                    {getDeferimentoBadge(selectedItem.deferimento).label}
+                                </span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block mb-1">Disponibilidade</small>
+                                <div className="d-flex gap-2">
+                                    {selectedItem.aluno?.disponibilidadeManha === 1 && <span className="badge bg-info">Manhã</span>}
+                                    {selectedItem.aluno?.disponibilidadeTarde === 1 && <span className="badge bg-primary">Tarde</span>}
+                                    {selectedItem.aluno?.disponibilidadeNoite === 1 && <span className="badge bg-dark">Noite</span>}
+                                    {selectedItem.aluno?.disponibilidadeManha !== 1 && selectedItem.aluno?.disponibilidadeTarde !== 1 && selectedItem.aluno?.disponibilidadeNoite !== 1 && (
+                                        <span className="text-muted">Nenhum período disponível</span>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block mb-1">Hab. Atend. Público</small>
+                                <div className="d-flex gap-2">
+                                    {selectedItem.aluno?.habilidadeAtendPublic === 1 ? <span className="badge bg-success">Sim</span> 
+                                        :
+                                        (selectedItem.aluno?.habilidadeAtendPublic === 0 ? <span className="badge bg-secondary">Não</span> : 
+                                            <span className="text-muted">Sem Resposta</span>
+                                        )
+                                    }
+                                </div>
+                            </div>
+                            <div className="col-sm-12">
+                                <small className="text-muted d-block mb-1">Curso Extracurrillar</small>
+                                <span>{selectedItem?.aluno?.cursoExtraCurricular ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-12">
+                                <small className="text-muted d-block mb-1">Experiência Profissional</small>
+                                <span>{selectedItem.aluno?.experienciaCurricular ?? '-'}</span>
+                            </div>
+                        </div>
+                        <hr />
+
+                        <h6 className="text-muted fw-semibold mb-2">Dados da Requisição</h6>
+                        <div className="row g-2">
+                             <div className="col-sm-3">
+                                <small className="text-muted d-block">Nº Requisição</small>
+                                <span>{selectedItem.idRequisicao ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Modalidade</small>
+                                <span>{selectedItem.modalidade?.descricaoModalidade ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Departamento</small>
+                                <span>{selectedItem.idDepartamento ?? '-'}</span>
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-muted d-block">Data da Requisição</small>
+                                <span>
+                                    {selectedItem.dataRequisicao
+                                        ? new Date(selectedItem.dataRequisicao).toLocaleString('pt-BR')
+                                        : '-'}
+                                </span>
+                            </div>
+                        </div>
+                    </>
+                )}
+            </Modal.Body>
+            <Modal.Footer>
+                <button className="btn btn-secondary" onClick={handleCloseModal}>Fechar</button>
+            </Modal.Footer>
+        </Modal>
+        </>
     );
 }

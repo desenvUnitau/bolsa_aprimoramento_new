@@ -5,6 +5,7 @@ import { api, setAuthToken } from '../config/api';
 import { TOKEN_KEYS, setStoredAlunoData } from '../config/auth';
 import FormLogin from './Form/FormLogin';
 import './Login.css';
+import Skeleton from 'react-loading-skeleton';
 
 export default function Identificacao(){
     const navigate = useNavigate();
@@ -43,9 +44,21 @@ export default function Identificacao(){
                 navigate('/', { replace: true });
                 return;
             }
+            if(status === 'PODE_RENOVAR'){
+                 if (!token) {
+                    toast.error('Token de autenticação não recebido.');
+                    return;
+                }
+                localStorage.setItem(TOKEN_KEYS.aluno, token);
+                setStoredAlunoData(dadosAluno);
+                setAuthToken(token);
+                toast.success('Aluno identificado com sucesso.');
+                navigate('/', { replace: true });
+                return;
+            }
 
             if (status === 'EXISTE_NO_SISTEMA') {
-                toast.warn('Que o cadastro dele já foi enviado, aguarde o setor entrar em contato');
+                toast.warn('Que o cadastro do(a) aluno(a) já foi enviado, aguarde o setor entrar em contato');
                 return;
             }
 
@@ -65,12 +78,23 @@ export default function Identificacao(){
 
     return(
         <div>
-            <div className="d-flex justify-content-center align-items-center mt-5">
+            {isSubmitting ? 
                 <div>
-                <FormLogin mask={'000.000.000-00'} labelTop='Identificação' 
-                    idPlaceHtml1={'RA'} id={'ra'} idPlaceHtml2={'CPF'} idSenha={'cpf'} onSubmit={handleIdentificationSubmit}/>
+                    <div className='d-flex justify-content-center align-items-center mt-5'>
+                        <Skeleton />    
+                        <Skeleton />    
+                        <Skeleton />    
+                    </div>
                 </div>
-            </div>
+            :
+                <div className="d-flex justify-content-center align-items-center mt-5">
+                    <div>
+                    <FormLogin mask={'000.000.000-00'} labelTop='Identificação' 
+                        idPlaceHtml1={'RA'} id={'ra'} idPlaceHtml2={'CPF'} idSenha={'cpf'} onSubmit={handleIdentificationSubmit}/>
+                    </div>
+                </div>
+            
+            }
         </div>
     )
 }
